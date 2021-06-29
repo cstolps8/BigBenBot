@@ -15,7 +15,8 @@ let vcArr = []
 Client.on('ready', async () => {
 	try {
 		guild = await Client.guilds.fetch(GUILD_ID)
-		getFullestVoiceChannel()
+		let VOICE_CHANNEL_ID = await getFullestVoiceChannel()
+		console.log("This channel has the most users in it " + VOICE_CHANNEL_ID)
 		voiceChannel = guild.channels.cache.get(VOICE_CHANNEL_ID);
 	} catch (error) {
 		console.log(error);
@@ -26,9 +27,21 @@ Client.on('ready', async () => {
 });
 
 // use node-cron to create a job to run every hour
-//const task = cron.schedule('0 0 */1 * * *', async () => {
-	//debugging uncomment next line
-const task = cron.schedule('5 * * * * *', async () => {
+// const task = cron.schedule('0 0 */1 * * *', async () => {
+//debugging uncomment next line
+//const task = cron.schedule('5 * * * * *', async () => {
+Client.on('message', message => {
+	let connect = Client.channels.cache.get('793901584060514354')
+	if (message.content.startsWith("join")) {
+		const connection = message.member.voice.channel.join();
+	}
+	if (message.content.startsWith("leave")) {
+		console.log("leaving")
+		const connection = message.member.voice.channel.leave();
+	}
+
+
+
 
 	let { hour, amPm, timezoneOffsetString } = getTimeInfo();
 
@@ -45,7 +58,7 @@ const task = cron.schedule('5 * * * * *', async () => {
 	if (voiceChannel.members.size >= 1) {
 		try {
 			// connect to voice channel
-			const connection = await voiceChannel.join();
+			const connection =  voiceChannel.join();
 			// counter for looping
 			let count = 1;
 
@@ -69,7 +82,7 @@ const task = cron.schedule('5 * * * * *', async () => {
 });
 
 //function to find the voice channel with the most users in it 
-const  getFullestVoiceChannel = () => {
+const getFullestVoiceChannel = () => {
 
 	//get all voice channel ids
 	// find voice channel with most users in it 
@@ -79,7 +92,8 @@ const  getFullestVoiceChannel = () => {
 
 		if (voiceChannel.type == "voice" && voiceChannel.members.array().length >= 1) {
 			console.log(voiceChannel.name + " has " + voiceChannel.members.array().length + " users in it ")
-			vcArr.push(voiceChannel.id)
+			//vcArr.push(voiceChannel.id)
+			return voiceChannel.id
 
 		}
 	});
@@ -105,6 +119,6 @@ const getTimeInfo = () => {
 }
 
 // start the cron job
-task.start();
+//task.start();
 
 Client.login(TOKEN);
