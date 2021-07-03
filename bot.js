@@ -8,7 +8,7 @@ const { TOKEN, VOICE_CHANNEL_ID, GUILD_ID, TEXT_CHANNEL_ID } = process.env;
 const Client = new Discord.Client();
 
 let guild, voiceChannel, textChannel;
-let vcArr
+let vcArr 
 
 // When bot comes online check the guild and voice channel are valid
 // if they are not found the program will exit
@@ -33,19 +33,10 @@ Client.on('ready', async () => {
 });
 
 // use node-cron to create a job to run every hour
-// const task = cron.schedule('0 0 */1 * * *', async () => {
+const task = cron.schedule('0 0 */1 * * *', async () => {
 //debugging uncomment next line
-const task = cron.schedule('5 * * * * *', async () => {
+//const task = cron.schedule('5 * * * * *', async () => {
 	console.log("----RUNNING BOT----")
-// Client.on('message', message => {
-// 	let connect = Client.channels.cache.get('793901584060514354')
-// 	if (message.content.startsWith("join")) {
-// 		const connection = message.member.voice.channel.join();
-// 	}
-// 	if (message.content.startsWith("leave")) {
-// 		console.log("leaving")
-// 		const connection = message.member.voice.channel.leave();
-// 	}
 
 	guild = await Client.guilds.fetch(GUILD_ID)
 	guild.channels.cache.each((values) => {
@@ -87,6 +78,7 @@ const task = cron.schedule('5 * * * * *', async () => {
 						count += 1;
 						if (count <= hour) {
 							play();
+              console.log("---Playing the ding dong---")
 						} else {
 							console.log("--LEAVING--")
 							 connection.disconnect();
