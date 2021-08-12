@@ -1,14 +1,17 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const cron = require('node-cron');
+const luxon = require('luxon')
+const { DateTime } = require("luxon");
 
 const { TOKEN, VOICE_CHANNEL_ID, GUILD_ID, TEXT_CHANNEL_ID } = process.env;
+
 
 
 const Client = new Discord.Client();
 
 let guild, voiceChannel, textChannel;
-let vcArr 
+let vcArr
 
 // When bot comes online check the guild and voice channel are valid
 // if they are not found the program will exit
@@ -34,8 +37,8 @@ Client.on('ready', async () => {
 
 // use node-cron to create a job to run every hour
 const task = cron.schedule('0 0 */1 * * *', async () => {
-//debugging uncomment next line
-//const task = cron.schedule('5 * * * * *', async () => {
+	//debugging uncomment next line
+	//const task = cron.schedule('5 * * * * *', async () => {
 	console.log("----RUNNING BOT----")
 
 	guild = await Client.guilds.fetch(GUILD_ID)
@@ -47,12 +50,11 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
 		}
 	});
 
-	voiceChannel =  guild.channels.cache.get(vcArr);
+	voiceChannel = guild.channels.cache.get(vcArr);
 
 
 
 	let { hour, amPm, timezoneOffsetString } = getTimeInfo();
-
 	// if text channel was defined send message in chat
 	if (textChannel) {
 		const messageEmbed = new Discord.MessageEmbed()
@@ -78,10 +80,9 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
 						count += 1;
 						if (count <= hour) {
 							play();
-              console.log("---Playing the ding dong---")
 						} else {
 							console.log("--LEAVING--")
-							 connection.disconnect();
+							connection.disconnect();
 						}
 					})
 			})();
@@ -90,6 +91,9 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
 			console.log(error);
 		}
 	}
+}, {
+	scheduled: true,
+	timezone: "America/Chicago"
 });
 
 
@@ -98,6 +102,7 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
 const getTimeInfo = () => {
 	let time = new Date();
 	let hour = time.getHours() >= 12 ? time.getHours() - 12 : time.getHours();
+	console.log(hour)
 	hour = hour === 0 ? 12 : hour;
 	let amPm = time.getHours() >= 12 ? 'PM' : 'AM';
 	// get gmt offset in minutes and convert to hours
@@ -114,5 +119,5 @@ const getTimeInfo = () => {
 
 // start the cron job
 task.start();
-
+getTimeInfo()
 Client.login(TOKEN);

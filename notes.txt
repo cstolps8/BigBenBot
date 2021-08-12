@@ -26,3 +26,7 @@
 402522493069295627 my id
 793655401055780865 bot id
 
+
+
+service docker start
+service docker status
